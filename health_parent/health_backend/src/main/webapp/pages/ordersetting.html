@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/orderset.css">
+    </head>
+    <body class="hold-transition">
+    <div id="app">
+        <div class="content-header">
+            <h1>Reservation Management<small>Reservation settings</small></h1>
+            <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                <el-breadcrumb-item>Reservation Management</el-breadcrumb-item>
+                <el-breadcrumb-item>Reservation settings</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <div class="app-container">
+            <div class="box">
+                <div class="box ordersetting">
+                    <el-card class="box-card">
+                        <div class="boxMain">
+                            <el-button style="margin-bottom: 20px;margin-right: 20px" type="primary" @click="downloadTemplate()">Template Download</el-button>
+                            <el-upload action="../ordersetting/upload.do"
+                                       name="excelFile"
+                                       :show-file-list="false"
+                                       :on-success="handleSuccess"
+                                       :before-upload="beforeUpload">
+                                <el-button type="primary">Upload</el-button>
+                            </el-upload>
+                        </div>
+                        <div>
+                            Download and fill the template, then upload the modified template file to change settings in batch.
+                        </div>
+                    </el-card>
+                    <div class="calendar">
+                        <!-- Year Month -->
+                        <div class="month">
+                            <div class="currentdate">
+                                <span class="choose-year">{{ currentYear }}&nbsp;/</span>
+                                <span class="choose-month">{{ currentMonth }}</span>
+                            </div>
+                            <div class="choose">
+                                <span @click="goCurrentMonth(today.getFullYear(),today.getMonth() + 1)" class="gotoday">Today</span>
+                                <span @click="pickPre(currentYear,currentMonth)">❮</span>
+                                <span @click="pickNext(currentYear,currentMonth)">❯</span>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <!-- Week -->
+                        <div class="caldate">
+                            <ul class="weekdays">
+                                <li>Mon</li>
+                                <li>Tue</li>
+                                <li>Wed</li>
+                                <li>Thur</li>
+                                <li>Fri</li>
+                                <li>Sat</li>
+                                <li>Sun</li>
+                            </ul>
+                            <!-- date -->
+                            <ul class="days">
+                                <!-- v-for loop to create <li> tag for one day -->
+                                <li v-for="dayobject in days">
+                                    <template>
+                                        <!-- days not in current month -->
+                                        <div class="other-month" v-if="dayobject.day.getMonth()+1 != currentMonth">
+                                            {{ dayobject.day.getDate() }}
+                                        </div>
+                                        <!-- days in current month -->
+                                        <div class="everyday" v-if="dayobject.day.getMonth() + 1 == currentMonth">
+                                            <span class="datenumber">{{ dayobject.day.getDate()}}</span>
+											<template>
+                                                <template v-for="orderSetting in orderSettings">
+                                                    <template v-if="orderSetting.orderDate.getDate() == dayobject.day.getDate()">
+                                                        <template v-if="orderSetting.number > orderSetting.reservations">
+                                                            <div class="usual">
+                                                                <p>Capacity: {{orderSetting.number}}</p>
+                                                                <p>Reserved: {{orderSetting.reservations}}</p>
+                                                            </div>
+                                                        </template>
+                                                        <template v-else>
+                                                            <div class="fulled">
+                                                                <p>Capacity: {{orderSetting.number}}</p>
+                                                                <p>Reserved: {{orderSetting.reservations}}</p>
+                                                                <p>Full</p>
+                                                            </div>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                                <button v-if="dayobject.day > today" @click="handleOrderSet(dayobject.day)" class="orderbtn">Settings</button>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script src="../plugins/elementui/en.js"></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data:{
+                today : new Date(),
+                currentDay: 1,
+                currentMonth: 1,
+                currentYear: 1970,
+                currentDayOfWeek: 0,
+                days: [],
+                orderSettings: []
+            },
+            created: function () {
+                this.initData(null);
+            },
+            methods: {
+                // order settings
+                handleOrderSet(day){
+                    this.$prompt("Please input capacity for the date" , "OrderSetting",
+                        {
+                            confirmButtonText: "Submit",
+                            cancelButtonText : "Cancel",
+                            inputPattern : /^\d*[1-9]\d*$/,
+                            inputErrorMessage : "Please input number"
+                        }
+                    ).then((res) => {
+                        var param = {
+                            number  : res.value,
+                            orderDate : this.formatDate(day.getFullYear(), day.getMonth() + 1 , day.getDate())
+                        };
+                        axios.put("../ordersetting/editNumberByOrderDate.do", param).then((res)=>{
+                            if(this.ifAccessDenied(res)) {
+                                return false;
+                            }
+                            if(res.data.flag) {
+                                this.$message.success(res.data.message);
+                                this.initData(this.formatDate(day.getFullYear(), day.getMonth() + 1 , day.getDate()));
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    }).catch((res)=>{
+                        this.$message.info("Canceled");
+                    });
+                },
+                // validate template format before uploading
+                beforeUpload(file){
+                    if(file.type == undefined) {
+                        var name = file.name;
+                        var idx = name.lastIndexOf(".");
+                        var extension = name.substr(idx);
+                        if(extension != ".xls" && extension != ".xlsx") {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    const isXLS = file.type === 'application/vnd.ms-excel';
+                    if(isXLS){
+                        return true;
+                    }
+                    const isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    if (isXLSX) {
+                        return true;
+                    }
+                    this.$message.error('Only XLS file and XLSX file are acceptable!');
+                    return false;
+                },
+                downloadTemplate(){
+                    window.location.href = "../template/ordersetting_template.xlsx";
+                },
+                handleSuccess(response, file) {
+                    if(response.status && response.status == 403) {
+                        this.$message.error(response.message);
+                        return;
+                    }
+                    if(response.flag){
+                        this.$message({
+                            message: response.message,
+                            type: 'success'
+                        });
+                    }else{
+                        this.$message.error(response.message);
+                    }
+                    console.log(response, file, fileList);
+                },
+                //init calendar based on date string [cur]
+                initData(cur) {
+                    var date;
+                    if (cur) {
+                        date = this.getDateFromStr(cur);
+                    } else {
+                        date = new Date();
+                    }
+                    this.currentDay = date.getDate();
+                    this.currentYear = date.getFullYear();
+                    this.currentMonth = date.getMonth() + 1;
+                    this.currentDayOfWeek = date.getDay();
+                    var startDate = new Date(this.currentYear, this.currentMonth - 1, 1);
+
+                    // ensure put the day in the right weekday position
+                    // find the first Monday
+                    if(startDate.getDay() == 0) {
+                        startDate.setDate(startDate.getDate() - 6);
+                    } else {
+                        startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
+                    }
+
+                    // find the last Sunday
+                    var endDate = new Date(this.currentYear, this.currentMonth - 1 + 1, 0);
+                    if(endDate.getDay() != 0) {
+                        endDate.setDate(endDate.getDate() - endDate.getDay() + 7);
+                    }
+                    var diffDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+                    this.days = [];
+
+                    for(var i = 0 ; i <= diffDays ; i++) {
+                        var d = new Date(startDate);
+                        d.setDate(d.getDate() + i);
+                        if(d > endDate) {
+                            break;
+                        }
+                        var dayobject = {};
+                        dayobject.day = d;
+                        this.days.push(dayobject);
+                    }
+
+                    this.orderSettings = [];
+                    axios.get("../ordersetting/getOrderSettingByMonth.do?date="
+                        +this.currentYear + "-"+ this.currentMonth).then((res)=>{
+                        if(res.data.flag){
+                            for(var ordersetting of res.data.data) {
+                                ordersetting.orderDate = this.getDateFromStr(ordersetting.orderDate);
+                            }
+                            this.orderSettings = res.data.data;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                },
+                goCurrentMonth(year, month) {
+                    var d = new Date();
+                    this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+                },
+                // previous month
+                pickPre(year, month) {
+                    // setDate(-1); the last day of previous month
+                    // setDate(-2); the last second day of last month
+                    var d = new Date(year, month - 1 , 0);
+                    this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, d.getDate()));
+                },
+                // next month
+                pickNext(year, month) {
+                    var d = new Date(year, month - 1 , 1);
+                    d.setDate(32); // go to next month
+                    this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, d.getDate()));
+                },
+                // format date , the backend only resolve data string in yyyy-MM-dd format
+                formatDate(year, month, day) {
+                    var y = year;
+                    var m = month;
+                    if(m < 10) m = "0" + m ;
+                    var d = day;
+                    if(d < 10) d = "0" + d;
+                    return y + "-" + m + "-" + d
+                },
+                getDateFromStr(str) {
+                    var nums = str.split(/\D/);
+                    var year  = new Number(nums[0]);
+                    var month  = new Number(nums[1]) - 1;
+                    var day = new Number(nums[2]);
+                    return new Date(year , month, day);
+                },
+                ifAccessDenied(response){
+                    // this.$alert(response);
+                    if( response.data.status && response.data.status == 403) {
+                        this.$message.error(response.data.message);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        })
+    </script>
+    </body>
+</html>

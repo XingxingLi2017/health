@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>XingHealth</title>
+    <meta name="description" content="XingHealth">
+    <meta name="keywords" content="XingHealth">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style type="text/css">
+    .el-main{
+        position: absolute;
+        top: 70px;
+        bottom: 0px;
+        left: 250px;
+        right: 10px;
+        padding: 0;
+    }
+    </style>
+</head>
+<body class="hold-transition skin-purple sidebar-mini">
+    <div id="app">
+        <el-container>
+            <!-- Header -->
+            <el-header  class="main-header" style="height:70px;">
+                <nav class="navbar navbar-static-top" :class=''>
+                    <!-- Logo -->
+                    <a href="#" class="logo" style="text-align:center;font-family: Calibri;font-size: x-large">
+                        XingHealth Admin Console
+                        <!--<span class="logo-lg"><img src="../img/logo.png"></span>-->
+                    </a>
+                    <div class="right-menu">
+                        <span class="help"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>Help</span>
+                        <el-dropdown class="avatar-container right-menu-item" trigger="click">
+                            <div class="avatar-wrapper">
+                                <img src="../img/user2-160x160.jpg" class="user-avatar">
+                                {{username}}
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <!--<el-dropdown-item divided>-->
+                                    <!--<span style="display:block;">Change Password</span>-->
+                                <!--</el-dropdown-item>-->
+                                <el-dropdown-item divided>
+                                    <a href="../logout.do"><span style="display:block;">Exit</span></a>
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </nav>
+            </el-header>
+            <!-- Aside Menu Bar -->
+            <el-container>
+                <el-aside width="250px">
+                    <el-menu style="font-family: Calibri">
+                        <el-submenu v-for="menu in menuList" :index="menu.path">
+                            <template slot="title">
+                                <i class="fa" :class="menu.icon"></i>
+                                {{menu.title}}
+                            </template>
+                            <template v-for="child in menu.children">
+                                <el-menu-item :index="child.path">
+                                    <a :href="child.linkUrl" target="right">
+                                        {{child.title}}
+                                    </a>
+                                </el-menu-item>
+                            </template>
+                        </el-submenu>
+                    </el-menu>
+                </el-aside>
+
+                <!-- Content Area -->
+                <el-container>
+                    <iframe name="right" class="el-main" src="ordersetting.html" width="100%" height="100%" frameborder="0"></iframe>
+                </el-container>
+            </el-container>
+        </el-container>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script src="../plugins/elementui/en.js"></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
+    <script>
+        new Vue({
+            el: '#app',
+            data:{
+                username:"",
+                menuList:[
+                    {
+                        "path": "1",
+                        "title": "Workbench",
+                        "icon":"fa-dashboard"
+                        // "children": []
+                    },
+                    // {
+                    //     "path": "2",
+                    //     "title": "Membership Management",
+                    //     "icon":"fa-user-md",
+                    //     "children": [
+                    //         {
+                    //             "path": "/2-1",
+                    //             "title": "Member Profile",
+                    //             "linkUrl":"member.html",
+                    //             "children":[]
+                    //         },
+                    //         {
+                    //             "path": "/2-2",
+                    //             "title": "Physical Examination Upload",
+                    //             "children":[]
+                    //         },
+                    //         {
+                    //             "path": "/2-3",
+                    //             "title": "Member Statistics",
+                    //             "linkUrl":"all-item-list.html",
+                    //             "children":[]
+                    //         },
+                    //     ]
+                    // },
+                    {
+                        "path": "3",
+                        "title": "Reservation Management",
+                        "icon":"fa-tty",
+                        "children": [
+                            {
+                                "path": "/3-1",
+                                "title": "Reservation List",
+                                "linkUrl":"ordersettinglist.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/3-2",
+                                "title": "Reservation Settings",
+                                "linkUrl":"ordersetting.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/3-3",
+                                "title": "Package Management",
+                                "linkUrl":"setmeal.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/3-4",
+                                "title": "Check Group management",
+                                "linkUrl":"checkgroup.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/3-5",
+                                "title": "Check Item Management",
+                                "linkUrl":"checkitem.html",
+                                "children":[]
+                            },
+                        ]
+                    },
+                    // {
+                    //     "path": "4",
+                    //     "title": "Health Assessment",
+                    //     "icon":"fa-stethoscope",
+                    //     "children":[
+                    //         {
+                    //             "path": "/4-1",
+                    //             "title": "Physical Identification",
+                    //             "linkUrl":"all-medical-list.html",
+                    //             "children":[]
+                    //         },
+                    //     ]
+                    // },
+                    {
+                        "path": "5",     // menu item path in t_menu table
+                        "title": "Statistics Analysis",     // menu item name
+                        "icon":"fa-heartbeat",
+                        "children":[
+                            {
+                                "path": "/5-1",
+                                "title": "Member Amount",
+                                "linkUrl":"report_member.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/5-2",
+                                "title": "Reserved Package Proportion",
+                                "linkUrl":"report_setmeal.html",
+                                "children":[]
+                            },
+                            {
+                                "path": "/5-3",
+                                "title": "Business Statistics",
+                                "linkUrl":"report_business.html",
+                                "children":[]
+                            }
+                        ]
+                    }
+                ]
+            },
+            created(){
+                axios.get("../user/getUsername.do").then((res)=>{
+                    if(res.data.flag) {
+                        this.username = res.data.data;
+                    }
+                });
+            },
+            methods:{
+
+            }
+        });
+        $(function() {
+            var wd = 250;
+            $(".el-main").css('width', $('body').width() - wd + 'px');
+        });
+    </script>
+</body>
+</html>

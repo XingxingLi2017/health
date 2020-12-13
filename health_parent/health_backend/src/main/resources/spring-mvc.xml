@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://code.alibabatech.com/schema/dubbo
+						http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd">
+    <mvc:annotation-driven>
+        <!-- use fastjson converter when write object back to provider -->
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes" value="application/json"/>
+                <property name="features">
+                    <list>
+                        <value>WriteMapNullValue</value>
+                        <value>WriteDateUseDateFormat</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <context:property-placeholder location="classpath:*.properties"/>
+    <!-- consumer application name -->
+    <dubbo:application name="health_backend" />
+    <!-- registry address -->
+    <dubbo:registry address="zookeeper://${zookeeper.url}"/>
+    <!-- package scan -->
+    <dubbo:annotation package="com.xing.controller,com.xing.security" />
+    <!--
+        timeout settings : 10 mins
+        check=false : don't check whether provider has launched
+        check=true : check whether provider has launched
+    -->
+    <dubbo:consumer timeout="600000" check="false"/>
+    <!-- upload file -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="104857600" />
+        <property name="maxInMemorySize" value="4096" />
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <import resource="spring-redis.xml"/>
+    <import resource="spring-security.xml"/>
+    <import resource="spring-session.xml"/>
+</beans>

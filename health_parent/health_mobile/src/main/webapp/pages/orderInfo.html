@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../img/asset-favico.ico">
+        <title>Edit Info</title>
+        <link rel="stylesheet" href="../css/page-health-orderInfo.css" />
+        <link rel="stylesheet" href="../plugins/elementui/index.css" />
+        <script src="../plugins/jquery/dist/jquery.min.js"></script>
+        <script src="../plugins/healthmobile.js"></script>
+        <script src="../plugins/datapicker/datePicker.js"></script>
+        <script src="../plugins/vue/vue.js"></script>
+        <script src="../plugins/vue/axios-0.18.0.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script>
+            var id = getUrlParam("id");
+        </script>
+    </head>
+    <body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+        <div id="app" class="app">
+            <div class="top-header">
+                <span class="f-left"><i class="icon-back" onclick="history.go(-1)"></i></span>
+                <span class="center">XingHealth</span>
+                <span class="f-right"><i class="icon-more"></i></span>
+            </div>
+            <div class="contentBox">
+                <div class="card">
+                    <div class="">
+                        <img :src="'http://qiniu.xingxingli.org/'+setmeal.img" width="100%" height="100%" />
+                    </div>
+                    <div class="project-text">
+                        <h4 class="tit">{{setmeal.name}}</h4>
+                        <p class="subtit">{{setmeal.remark}}</p>
+                        <p class="keywords">
+                            <span>{{setmeal.sex == '0' ? 'M/F' : setmeal.sex == '1' ? 'M':'F'}}</span>
+                            <span>{{setmeal.age}}</span>
+                        </p>
+                    </div>
+                    <div class="project-know">
+                        <a href="orderNotice.html" class="link-page">
+                            <i class="icon-ask-circle"><span class="path1"></span><span class="path2"></span></i>
+                            <span class="word">Notice</span>
+                            <span class="arrow"><i class="icon-rit-arrow"></i></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="info-title">
+                        <span class="name">Patient Info</span>
+                    </div>
+                    <form class="info-form">
+                        <div class="input-row">
+                            <label>Name</label>
+                            <input v-model="orderInfo.name" type="text" class="input-clear" placeholder="Please input your name">
+                        </div>
+                        <div class="input-row single-radio">
+                            <label class="radio-title">Sex</label>
+                            <div class="radio-list">
+                                <div class="radio">
+                                    <input v-model="orderInfo.sex" id="item1" type="radio" name="sex" value="1" checked>
+                                    <label for="item1"></label>
+                                    <span>Male</span>
+                                </div>
+                                <div class="radio">
+                                    <input v-model="orderInfo.sex" id="item2" type="radio" name="sex" value="2">
+                                    <label for="item2"></label>
+                                    <span>Female</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <label>Email</label>
+                            <div class="emailVerification">
+                                <input v-model="orderInfo.email" type="text" class="input-clear" placeholder="Please input your email">
+                                <input style="font-size: x-small;" id="validateCodeButton" @click="sendValidateCode()" type="button" value="Send Verification Code">
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <label>Verification Code</label>
+                            <input v-model="orderInfo.validateCode" type="text" class="input-clear" placeholder="Please input verification code">
+                        </div>
+                        <div class="input-row">
+                            <label>Telephone</label>
+                            <input v-model="orderInfo.telephone" type="text" class="input-clear" placeholder="Please input phone number">
+                        </div>
+                        <div class="input-row">
+                            <label>Diver License#</label>
+                            <input v-model="orderInfo.idCard" type="text" class="input-clear" placeholder="Please input driver license number">
+                        </div>
+                        <!--<div class="date">-->
+                        <div class="input-row">
+                            <label>Reserved Date</label>
+                            <input id="inputDate" v-model="orderInfo.orderDate" type="text" class="picktime" placeholder="You can only reserve date in 30 days" readonly>
+                            <i class="icon-date" onclick="javascript:$('#inputDate').click()"></i>
+                        </div>
+                    </form>
+                    <div class="box-button">
+                        <button @click="submitOrder()" type="button" class="btn order-btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var vue = new Vue({
+                el:'#app',
+                data:{
+                    setmeal:{},// setmeal info
+                    orderInfo:{
+                        setmealId:id,
+                        sex:'1'
+                    }
+                },
+                methods:{
+                    sendValidateCode(){
+                        // send verification code to user's email address
+                        var email = this.orderInfo.email;
+                        if(!checkEmail(email)){
+                            this.$message.error("The email format is invalid!");
+                            return false;
+                        }
+                        // disable send button and start countdown
+                        validateCodeButton = $('#validateCodeButton')[0];
+                        clock = window.setInterval(doLoop, 1000);
+
+                        // send validate code
+                        axios.post("../validateCode/send4Order.do?email=" + email).then((res)=>{
+                            if(res.data.flag) {
+                                this.$message.success(res.data.message);
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    },
+                    submitOrder(){
+                        // validation
+                        var telephone = this.orderInfo.telephone;
+                        var email = this.orderInfo.email;
+                        if(!checkTelephone(telephone)) {
+                            this.$message.error("Telephone number format is invalid!");
+                            return false;
+                        }
+                        if(!checkEmail(email)) {
+                            this.$message.error("The email format is invalid!");
+                            return false;
+                        }
+
+                        if(!this.orderInfo.name||
+                            !this.orderInfo.orderDate||
+                            !this.orderInfo.telephone||
+                            !this.orderInfo.validateCode||
+                            !this.orderInfo.idCard) {
+                            this.$message.error("There should not be blank in the info form.");
+                            return false;
+                        }
+
+                        console.log(this.orderInfo);
+                        const loading = this.$loading({
+                            lock: true,
+                            text: 'Loading',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        // create new order
+                        axios.post("../order/submit.do", this.orderInfo).then((res)=>{
+                            if(res.data.flag) {
+                                window.location.href = "orderSuccess.html?orderId=" + res.data.data;
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        }).finally((res)=>{
+                            loading.close();
+                        });
+                    }
+                },
+                mounted(){
+                    axios.get("../setmeal/findByIdWithoutDetail.do?id="+id).then((res)=>{
+                        if(res.data.flag) {
+                            this.setmeal = res.data.data;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                }
+            });
+        </script>
+        <script>
+            var calendar = new datePicker();
+            calendar.init({
+                'trigger': '.picktime',     //trgger for poping up calendar plugin
+                'type': 'date',         // date for only date , datetime for time : date format
+                'minDate': getSpecifiedDate(new Date(),1),// minimum date
+                'maxDate': getSpecifiedDate(new Date(),30), // maximum date
+                'onSubmit': function() {
+                    //var theSelectData = calendar.value;
+                },
+                'onClose': function() {  }
+            });
+        </script>
+    </body>
+</html>

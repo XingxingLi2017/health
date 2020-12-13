@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringFacetInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/mvc
+                            http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                            http://code.alibabatech.com/schema/dubbo
+                            http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.xing" >
+        <!--<context:exclude-filter type="annotation" expression="com.alibaba.dubbo.config.annotation.Service"/>-->
+        <!--<context:exclude-filter type="regex" expression="com\.xing\.service\..*"/>-->
+        <!--<context:exclude-filter type="regex" expression="com\.xing\.dao\..*"/>-->
+        <context:include-filter type="regex" expression="com\.xing\.config\..*"/>
+    </context:component-scan>
+    <context:property-placeholder location="classpath:*.properties"/>
+    <!-- specify dubbo application name -->
+    <dubbo:application name="health_service_provider"/>
+
+    <!--specify provider's port ，default port is 20880-->
+    <dubbo:protocol name="dubbo" port="20887"/>
+
+    <!--specify registry ip address-->
+    <dubbo:registry  address="zookeeper://${zookeeper.url}"/>
+
+    <!-- scan service annotation and publish service -->
+    <dubbo:annotation package="com.xing.service"/>
+
+    <!--freemarker configuration-->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <!--template file directories-->
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/" />
+        <!--charset-->
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+
+    <!-- zk client used for DistributedLock -->
+    <!--<bean id="zkClient" class="org.I0Itec.zkclient.ZkClient">-->
+        <!--<constructor-arg value="{zookeeper.url}"/>-->
+    <!--</bean>-->
+</beans>

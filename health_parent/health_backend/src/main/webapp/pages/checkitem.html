@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1>Reservation Management<small>Check Item Management</small></h1>
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                    <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                    <el-breadcrumb-item>Reservation Management</el-breadcrumb-item>
+                    <el-breadcrumb-item>Check Item Management</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="app-container">
+                <div class="box">
+                    <!-- search item row -->
+                    <div class="filter-container">
+                        <el-input placeholder="Item Code/Item Name" v-model="pagination.queryString" style="width: 200px;" class="filter-item"></el-input>
+                        <el-button @click="searchPage()" class="dalfBut">Search</el-button>
+                        <el-button type="primary" class="butT" @click="handleCreate()">Create</el-button>
+                    </div>
+                    <!-- items table -->
+                    <el-table size="medium" current-row-key="id" :data="dataList" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="#"></el-table-column>
+                        <el-table-column prop="code" label="Item Code" align="center"></el-table-column>
+                        <el-table-column prop="name" label="Item Name" align="center"></el-table-column>
+                        <el-table-column label="Sex" align="center">
+                            <template slot-scope="scope">
+                                <span>{{ scope.row.sex == '0' ? 'M/F' : scope.row.sex == '1' ? 'M' : 'F'}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="age" label="Age Range" align="center"></el-table-column>
+                        <el-table-column prop="price" label="Price" align="center"></el-table-column>
+                        <el-table-column prop="remark" label="Description" align="center"></el-table-column>
+                        <el-table-column label="Action" align="center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Edit</el-button>
+                                <el-button type="danger" size="mini"  @click="handleDelete(scope.row)">Delete</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="pagination-container">
+                        <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+
+                    <!-- Add item pop-up window -->
+                    <div class="add-form" @keypress="handleKeyPress($event)">
+                        <el-dialog title="Add New Check Item" :visible.sync="dialogFormVisible">
+                            <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Item Code" prop="code">
+                                            <el-input v-model="formData.code"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Item Name" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Sex">
+                                            <el-select v-model="formData.sex">
+                                                <el-option label="M/F" value="0"></el-option>
+                                                <el-option label="M" value="1"></el-option>
+                                                <el-option label="F" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Age Range" prop="age">
+                                            <el-input v-model="formData.age"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Type">
+                                            <el-select v-model="formData.type">
+                                                <el-option label="Non-lab" value="1"></el-option>
+                                                <el-option label="Lab" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="price" prop="price">
+                                            <el-input v-model="formData.price"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="Description">
+                                            <el-input v-model="formData.remark" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="Attention">
+                                            <el-input v-model="formData.attention" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="handleAdd()">Submit</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+                    <!-- edit item pop-up -->
+                    <div class="add-form">
+                        <el-dialog title="Edit Check Item" :visible.sync="dialogFormVisible4Edit">
+                            <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Item Code" prop="code">
+                                            <el-input v-model="formData.code"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Item Name" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Sex">
+                                            <el-select v-model="formData.sex">
+                                                <el-option label="M/F" value="0"></el-option>
+                                                <el-option label="M" value="1"></el-option>
+                                                <el-option label="F" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Age Range" prop="age">
+                                            <el-input v-model="formData.age"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="Type">
+                                            <el-select v-model="formData.type">
+                                                <el-option label="Non-lab" value="1"></el-option>
+                                                <el-option label="Lab" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Price" prop="price">
+                                            <el-input v-model="formData.price"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="Description">
+                                            <el-input v-model="formData.remark" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="Attention">
+                                            <el-input v-model="formData.attention" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible4Edit = false">Cancel</el-button>
+                                <el-button type="primary" @click="handleEdit()">Submit</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/vue.js"></script>
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script src="../js/axios-0.18.0.js"></script>
+        <script src="../plugins/elementui/en.js"></script>
+        <script>
+            ELEMENT.locale(ELEMENT.lang.en)
+        </script>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data(){
+                    var validatePrice = (rule, value, callback) => {
+                        var reg = /^(\d*|\d+\.\d+)$/;
+                        console.log(reg.test(value));
+                        if(!reg.test(value)){
+                            callback(new Error('price can only be number'));
+                        } else {
+                            callback();
+                        }
+                    }
+                    var validateAge = (rule, value, callback) => {
+                        var reg1 = /^\d+-\d+$/;
+                        var reg2 = /^\d*$/;
+                        console.log(reg1.test(value));
+                        if(reg1.test(value)){
+                            var age1 = new Number(value.split('-')[0]);
+                            var age2 = new Number(value.split('-')[1]);
+                            if(age1 <= age2) {
+                                callback();
+                            } else {
+                                callback(new Error('age range is invalid'));
+                            }
+                            return;
+                        }
+                        if(reg2.test(value)){
+                            callback();
+                            return;
+                        }
+                        callback(new Error('age can only be integer or integer-integer range'));
+                    }
+                    return {
+                        pagination: {
+                            currentPage: 1,
+                            pageSize:10,
+                            total:0,
+                            // query condition, search check item name
+                            queryString:null
+                        },
+                        // records in current page
+                        dataList: [],
+                        formData: {
+                            id:'',
+                            name:'',
+                            code:'',
+                            sex:'',
+                            age:'',
+                            type:'',
+                            price:'',
+                            remark:'',
+                            attention:''
+                        },
+                        dialogFormVisible: false,
+                        dialogFormVisible4Edit:false,
+                        rules: {
+                            code: [{ required: true, message: 'Must have item code', trigger: 'blur' }],
+                            name: [{ required: true, message: 'Must have item name', trigger: 'blur' }],
+                            price:[{ validator: validatePrice, trigger:'blur'}],
+                            age:[{validator: validateAge, trigger:'blur'}]
+                        }
+                    }
+                },
+                created() {
+                    this.findPage();
+                },
+                methods: {
+                    handleEdit() {
+                        // submit edit item form
+                        this.$refs.dataEditForm.validate((valid)=>{
+                            if(valid) {
+                                axios.put("../checkitem/edit.do", this.formData)
+                                    .then((res)=>{
+                                        if(this.ifAccessDenied(res)) {
+                                            return false;
+                                        }
+                                        if(res.data.flag){
+                                            this.$message.success(res.data.message);
+                                        } else {
+                                            this.$message.error(res.data.message);
+                                        }
+                                    })
+                                    .finally(()=>{
+                                        this.findPage();
+                                        this.dialogFormVisible4Edit = false;
+                                    });
+                            } else {
+                                this.$message.error("Form data validation failed!");
+                                return false;
+                            }
+                        });
+                    },
+                    handleAdd () {
+                        this.$refs.dataAddForm.validate((valid)=>{
+                            if(valid){
+                                console.log(this.formData);
+                                axios.post("../checkitem/add.do", this.formData)
+                                    .then((res)=>{
+                                        if(this.ifAccessDenied(res)) {
+                                            return false;
+                                        }
+                                        if(res.data.flag) {
+                                            this.dialogFormVisible = false;
+                                            this.$message({
+                                                message : res.data.message,
+                                                type:'success'
+                                            });
+                                            findPage();
+                                        } else {
+                                            this.$message({
+                                                message : res.data.message,
+                                                type:'error'
+                                            });
+                                        }
+                                    });
+                            } else {
+                                this.$message.error("Form validation failed!");
+                                return false;
+                            }
+                        });
+                    },
+                    searchPage(){
+                        this.pagination.currentPage = 1;
+                        this.findPage();
+                    },
+                    findPage() {
+                        // query records in curretn page
+                        var params = {
+                            currentPage: this.pagination.currentPage,
+                            pageSize: this.pagination.pageSize,
+                            queryString: this.pagination.queryString
+                        };
+                        axios.post("../checkitem/findPage.do", params)
+                            .then((res)=>{
+                                this.pagination.total = res.data.total;
+                                this.dataList = res.data.rows;
+                            });
+                    },
+                    resetForm() {
+                        this.formData = {
+                            id:'',
+                            name:'',
+                            code:'',
+                            sex:'',
+                            age:'',
+                            type:'',
+                            price:'',
+                            remark:'',
+                            attention:''
+                        }
+                        this.$nextTick(()=>{
+                            this.$refs['dataAddForm'].clearValidate();
+                        });
+                    },
+                    handleCreate() {
+                        // show add check item pop-up window
+                        this.dialogFormVisible = true;
+                        this.resetForm();
+                    },
+                    handleUpdate(row) {
+                        // show edit check item popup window
+                        // show user info and add id prop into formData
+                        axios.get('../checkitem/findById.do?id=' + row.id)
+                            .then((res)=>{
+                                if(res.data.flag) {
+                                    this.formData = res.data.data;
+                                    this.dialogFormVisible4Edit = true;
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                    },
+                    handleCurrentChange(currentPage) {
+                        // trigger when change page in pagination bar
+                        this.pagination.currentPage = currentPage;
+                        this.findPage();
+                    },
+                    handleDelete(row) {
+                        this.$confirm('Are you sure you want to delete check item "' + row.name + '" ?',
+                            'warning',
+                            {
+                                confirmButtonText: 'Yes',
+                                cancelButtonText: 'No',
+                                type : 'warning'
+                            })
+                            .then(()=>{
+                                axios.delete("../checkitem/delete.do?id=" + row.id).then((res)=>{
+                                    if(this.ifAccessDenied(res)) {
+                                        return false;
+                                    }
+                                    if(res.data.flag){
+                                        this.$message({
+                                            message: res.data.message,
+                                            type: 'success'
+                                        });
+                                        this.findPage();
+                                    } else {
+                                        this.$message({
+                                            message: res.data.message,
+                                            type: 'error'
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    ifAccessDenied(response){
+                        // this.$alert(response);
+                        if( response.data.status && response.data.status == 403) {
+                            this.$message.error(response.data.message);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    handleKeyPress(event){
+                        // console.log(this.formData);
+                    }
+                }
+            })
+        </script>
+    </body>
+
+</html>

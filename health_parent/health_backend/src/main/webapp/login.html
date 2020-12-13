@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="plugins/elementui/index.css">
+        <link rel="stylesheet" href="css/login.css">
+    </head>
+    <body class="hold-transition skin-purple sidebar-mini">
+        <div id="app">
+            <div class="login-container">
+                <div class="loginBox">
+                <!--<form method="post" class="login-form" action="/login.do" label-position="left">-->
+                <form id="loginForm" class="login-form" label-position="left">
+                    <div class="title-container">
+                        <div class="logoInfo clearfix">
+                            <h1 style="font-family: Arial">XingHealth System Login</h1>
+                            <!--<em class="logo"></em>-->
+                        </div>
+                    </div>
+                    <div>
+                    <span class="svg-container svg-container_login">
+                      <span class="user"></span>
+                    </span>
+                        <input type="text" name="username" v-model="loginForm.username"
+                               placeholder="Please input username"/>
+                    </div>
+                    <div>
+                    <span class="svg-container">
+                      <span class="username"></span>
+                    </span>
+                        <input type="password" name="password" v-model="loginForm.password"
+                               placeholder="Please input password"/>
+                    </div>
+                    <input type="button" @click="submitForm()" style="width:100%;margin-bottom:30px;" value="Login"/>
+                    <label>If you are a visitor, you can login with username 'test' and password '123456'</label>
+                  </form>
+                </div>
+              </div>
+        </div>
+    </body>
+    <script src="js/vue.js"></script>
+    <script src="plugins/elementui/index.js"></script>
+    <script src="plugins/elementui/en.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data : {
+                loginForm:{}
+            },
+            mounted(){
+               var error = this.getUrlParam("error");
+               if(error) {
+                   error = error.replaceAll("%%", " ");
+                   this.$message.error(error);
+               }
+            },
+            methods:{
+                submitForm(){
+                    axios.post("login.do", $("#loginForm").serialize()).then((res)=>{
+                        if(res.data.status == 401) {
+                            this.$message.error(res.data.message);
+                        } else {
+                            window.location.href = res.data.redirect;
+                        }
+                    });
+                },
+                getUrlParam(paraName) {
+                    var url = document.location.toString();
+                    var exp = "(\\?|&)"+paraName+"=([^&]*)(&|$)";
+                    var regex = new RegExp(exp, "i");
+                    var groups = url.match(regex);
+                    if(groups != null) {
+                        return groups[2]; // groups[0] is (&|?)paraName=xxx(&|$) , groups[2] is the value
+                    } else {
+                        return "";
+                    }
+                }
+            }
+        });
+    </script>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>XingHealth</title>
+    <meta name="description" content="XingHealth">
+    <meta name="keywords" content="XingHealth">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .datatable {
+            position: relative;
+            box-sizing: border-box;
+            -webkit-box-flex: 1;
+            width: 100%;
+            max-width: 100%;
+            font-size: 14px;
+            color: rgb(96, 98, 102);
+            overflow: hidden;
+            flex: 1 1 0%;
+        }
+    </style>
+</head>
+<body class="hold-transition">
+    <div id="app">
+        <div class="content-header">
+            <h1>Reservation Management<small>Reservation List</small></h1>
+            <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                <el-breadcrumb-item>Reservation Management</el-breadcrumb-item>
+                <el-breadcrumb-item>Reservation List</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <div class="app-container">
+            <div class="box">
+                <div class="filter-container">
+                    <el-input placeholder="Name/Email" v-model="pagination.queryString"
+                              style="width: 200px;" class="filter-item"
+                              @keyup.enter.native="handleFilter"></el-input>
+                    <el-button @click="searchPage()" class="dalfBut">Search</el-button>
+                    <el-button type="primary" class="butT" @click="handleCreate()">Create</el-button>
+                </div>
+
+                <!-- Table showing the records -->
+                <el-table size="medium" current-row-key="id" :data="dataList" stripe highlight-current-row>
+                    <el-table-column type="index" align="center" label="#"></el-table-column>
+                    <el-table-column prop="orderDate" label="Order Date" align="center"></el-table-column>
+                    <el-table-column prop="name" label="Name" align="center"></el-table-column>
+                    <el-table-column prop="email" label="Email" align="center"></el-table-column>
+                    <el-table-column prop="orderType" label="Order Type" align="center"></el-table-column>
+                    <!--<el-table-column prop="memberStatus" label="Member Status" align="center"></el-table-column>-->
+                    <el-table-column prop="orderStatus" label="Order Status" align="center"></el-table-column>
+                    <el-table-column label="Action" align="center">
+                        <template slot-scope="scope">
+                            <el-button v-if="scope.row.orderStatus == 'submitted'" type="primary" size="mini" @click="handleConfirm(scope.row)">Confirm</el-button>
+                            <el-button v-if="scope.row.orderStatus == 'submitted'" size="mini" type="danger" @click="handleCancel(scope.row)">Cancel</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="pagination-container">
+                    <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            :total="pagination.total"
+                            layout="total, prev, pager, next, jumper">
+                    </el-pagination>
+                </div>
+
+                <!-- add new order -->
+                <div class="add-form">
+                    <el-dialog title="Add New Reservation" :visible.sync="dialogFormVisible" v-if="dialogFormVisible">
+                        <template>
+                            <el-tabs v-model="activeName" type="card">
+                                <el-tab-pane label="Basic Info" name="first">
+                                    <el-form label-position="right" label-width="120px">
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-form-item label="Name">
+                                                    <el-input v-model="formData.name"/>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="DL#">
+                                                    <el-input v-model="formData.idCard"/>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-form-item label="Email">
+                                                    <el-input v-model="formData.email"/>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="Phone#">
+                                                    <el-input v-model="formData.telephone"/>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-form-item label="Sex">
+                                                    <el-select v-model="formData.sex">
+                                                        <el-option selected label="M" value="1"></el-option>
+                                                        <el-option label="F" value="2"></el-option>
+                                                    </el-select>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="Age">
+                                                    <el-input v-model="formData.age"/>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row>
+                                            <el-col :span="24">
+                                                <el-form-item label="Reservation Date">
+                                                    <el-date-picker
+                                                            v-model="formData.orderDate"
+                                                            type="date"
+                                                            placeholder="Select Date">
+                                                    </el-date-picker>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+
+                                    </el-form>
+                                </el-tab-pane>
+                                <el-tab-pane label="Package Info" name="second">
+                                    <div class="checkScrol">
+                                        <table class="datatable">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Remark</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="c in tableData">
+                                                <td>
+                                                    <input :id="c.id" type="checkbox" v-model="setmealIds"  :value="c.id">
+                                                </td>
+                                                <td><label :for="c.id">{{c.code}}</label></td>
+                                                <td><label :for="c.id">{{c.name}}</label></td>
+                                                <td><label :for="c.id">{{c.remark}}</label></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </template>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                            <el-button type="primary" @click="handleAdd()">Submit</el-button>
+                        </div>
+                    </el-dialog>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script src="../plugins/elementui/en.js"></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                dataList:[],
+                pagination : {
+                    currentPage:1,
+                    total:100,
+                    pageSize:10,
+                    queryString:null
+                },
+                dialogFormVisible : false,
+                activeName : 'first',
+                formData : {},
+                tableData:[],
+                setmealIds :[]
+            },
+            mounted(){
+                this.findPage();
+            },
+            methods:{
+                handleConfirm(row){
+                    axios.put("../order/confirm.do?id="+row.id).then((res)=>{
+                        if(this.ifAccessDenied(res)) return false;
+                        if(res.data.flag) {
+                            this.$message.success(res.data.message);
+                            this.findPage();
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                },
+                handleCancel(row){
+                    axios.put("../order/cancel.do?id="+row.id).then((res)=>{
+                        if(this.ifAccessDenied(res)) return false;
+                        if(res.data.flag) {
+                            this.$message.success(res.data.message);
+                            this.findPage();
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                },
+                handleCreate(){
+                    this.resetForm();
+                    this.dialogFormVisible = true;
+                    axios.get("../setmeal/findAll.do").then((res)=>{
+                        if(this.ifAccessDenied(res)) return false;
+                        if(res.data.flag){
+                            this.tableData = res.data.data;
+                            this.$message.success(res.data.message);
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                },
+                searchPage(){
+                    this.pagination.currentPage = 1;
+                    this.findPage();
+                },
+                findPage(){
+                    axios.post("../order/findPage.do", this.pagination).then((res)=>{
+                        if(this.ifAccessDenied(res)) return false;
+                        this.pagination.total = res.data.total;
+                        this.dataList = res.data.rows;
+                    });
+                },
+                handleAdd(){
+                    const loading = this.$loading({
+                        lock: true,
+                        text: 'Loading',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    var param = {};
+                    param.formData = this.formData;
+                    param.setmealIds = this.setmealIds;
+                    axios.post("../order/add.do", param).then((res)=>{
+                        if(this.ifAccessDenied(res)) return false;
+                        if(res.data.flag) {
+                            this.dialogFormVisible = false;
+                            this.$message.success(res.data.message);
+                            this.findPage();
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    }).finally((res)=>{
+                        loading.close();
+                    });
+                },
+                resetForm(){
+                    this.formData={};
+                    this.activeName = 'first';
+                    this.tableData=[];
+                    this.setmealIds=[];
+                },
+                ifAccessDenied(response){
+                    // this.$alert(response);
+                    if( response.data.status && response.data.status == 403) {
+                        this.$message.error(response.data.message);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+                handleCurrentChange(currentPage){
+                    this.pagination.currentPage = currentPage;
+                    this.findPage();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

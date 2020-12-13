@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../img/asset-favico.ico">
+    <title>Package Detail</title>
+    <link rel="stylesheet" href="../css/page-health-orderDetail.css" />
+    <script src="../plugins/vue/vue.js"></script>
+    <script src="../plugins/vue/axios-0.18.0.js"></script>
+    <script src="../plugins/healthmobile.js"></script>
+    <script src="../plugins/elementui/en.js"></script>
+    <script>
+        ELEMENT.locale(ELEMENT.lang.en)
+    </script>
+</head>
+<body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+<div id="app" class="app">
+    <div class="top-header">
+        <span class="f-left"><i class="icon-back" onclick="history.go(-1)"></i></span>
+        <span class="center">XingHealth</span>
+        <span class="f-right"><i class="icon-more"></i></span>
+    </div>
+    <div class="contentBox">
+        <div class="card">
+            <div class="project-img">
+                <img src="http://qiniu.xingxingli.org/93bb46fd-ad9c-4729-9950-387d295c4c41.jpg"
+                     width="100%" height="100%" />
+            </div>
+            <div class="project-text">
+                <h4 class="tit">test package 5</h4>
+                <p class="subtit">testtset</p>
+                <p class="keywords">
+                        <span>
+							M/F
+                        </span>
+                    <span>54</span>
+                </p>
+            </div>
+        </div>
+        <div class="table-listbox">
+            <div class="box-title">
+                <i class="icon-zhen"><span class="path1"></span><span class="path2"></span></i>
+                <span>Package Detail</span>
+            </div>
+            <div class="box-table">
+                <div class="table-title">
+                    <div class="tit-item flex2">Name</div>
+                    <div class="tit-item  flex3">Detail</div>
+                    <div class="tit-item  flex3">Explain</div>
+                </div>
+                <div class="table-content">
+                    <ul class="table-list">
+                                <li class="table-item">
+                                    <div class="item flex2">blood routine</div>
+                                        <div class="item flex3">
+                                            <label>
+                                                white blood cell count,
+                                            </label>
+                                            <label>
+                                                Red blood cell count,
+                                            </label>
+                                            <label>
+                                                hemoglobin,
+                                            </label>
+                                            <label>
+                                                hematocrit,
+                                            </label>
+                                            <label>
+                                                average red blood cell volume,
+                                            </label>
+                                            <label>
+                                                average red blood cell hemoglobin content,
+                                            </label>
+                                            <label>
+                                                average red blood cell hemoglobin concentration,
+                                            </label>
+                                            <label>
+                                                Red blood cell distribution width-coefficient of variation,
+                                            </label>
+                                            <label>
+                                                platelet count,
+                                            </label>
+                                            <label>
+                                                Average platelet volume,
+                                            </label>
+                                            <label>
+                                                platelet distribution width,
+                                            </label>
+                                            <label>
+                                                lymphocyte percentage,
+                                            </label>
+                                            <label>
+                                                Intermediate cell percentage,
+                                            </label>
+                                            <label>
+                                                neutrophil percentage,
+                                            </label>
+                                            <label>
+                                                Absolute lymphocyte value,
+                                            </label>
+                                            <label>
+                                                Intermediate cell absolute value,
+                                            </label>
+                                            <label>
+                                                Neutrophil Absolute Value,
+                                            </label>
+                                            <label>
+                                                Red blood cell distribution width-standard deviation,
+                                            </label>
+                                            <label>
+                                                platelet packing,
+                                            </label>
+                                        </div>
+                                    <div class="item flex3">blood routine</div>
+                                </li>
+                                <li class="table-item">
+                                    <div class="item flex2">Urine routine</div>
+                                        <div class="item flex3">
+                                            <label>
+                                                Urine specific gravity,
+                                            </label>
+                                            <label>
+                                                Urine pH,
+                                            </label>
+                                            <label>
+                                                urine leukocyte,
+                                            </label>
+                                            <label>
+                                                Urine Nitrite,
+                                            </label>
+                                            <label>
+                                                urine protein,
+                                            </label>
+                                            <label>
+                                                Urine Sugar,
+                                            </label>
+                                            <label>
+                                                urine ketone body,
+                                            </label>
+                                            <label>
+                                                urobilinogen,
+                                            </label>
+                                            <label>
+                                                urinary bilirubin,
+                                            </label>
+                                            <label>
+                                                Urine occult blood,
+                                            </label>
+                                            <label>
+                                                Urine microscopy red blood cells,
+                                            </label>
+                                            <label>
+                                                Urinary microscopy white blood cells,
+                                            </label>
+                                            <label>
+                                                epithelial cell,
+                                            </label>
+                                            <label>
+                                                inorganic salts,
+                                            </label>
+                                            <label>
+                                                Urinoscopy protein characterization,
+                                            </label>
+                                        </div>
+                                    <div class="item flex3">Urine routine</div>
+                                </li>
+                                <li class="table-item">
+                                    <div class="item flex2">Three items of liver function</div>
+                                        <div class="item flex3">
+                                            <label>
+                                                Alanine aminotransferase,
+                                            </label>
+                                            <label>
+                                                Aspartate Aminotransferase,
+                                            </label>
+                                            <label>
+                                                Y-glutamyltransferase,
+                                            </label>
+                                        </div>
+                                    <div class="item flex3">Three items of liver function</div>
+                                </li>
+                                <li class="table-item">
+                                    <div class="item flex2">Three kidney function</div>
+                                        <div class="item flex3">
+                                            <label>
+                                                urea,
+                                            </label>
+                                            <label>
+                                                creatinine,
+                                            </label>
+                                            <label>
+                                                uric acid,
+                                            </label>
+                                        </div>
+                                    <div class="item flex3">Three kidney function</div>
+                                </li>
+                    </ul>
+                </div>
+                <div class="box-button">
+                    <a @click="toOrderInfo()" class="order-btn">Reserve</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var vue = new Vue({
+        el:'#app',
+        methods:{
+            toOrderInfo(){
+                window.location.href = "orderInfo.html?id=16";
+            }
+        }
+    });
+</script>
+</body>

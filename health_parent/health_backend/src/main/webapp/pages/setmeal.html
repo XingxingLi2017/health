@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <style>
+            .avatar-uploader .el-upload {
+                border: 1px dashed #d9d9d9;
+                border-radius: 6px;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+            .avatar-uploader .el-upload:hover {
+                border-color: #409EFF;
+            }
+            .avatar-uploader-icon {
+                font-size: 28px;
+                color: #8c939d;
+                width: 178px;
+                height: 178px;
+                line-height: 178px;
+                text-align: center;
+            }
+            .avatar {
+                width: 178px;
+                height: 178px;
+                display: block;
+            }
+            .datatable {
+                position: relative;
+                box-sizing: border-box;
+                -webkit-box-flex: 1;
+                width: 100%;
+                max-width: 100%;
+                font-size: 14px;
+                color: rgb(96, 98, 102);
+                overflow: hidden;
+                flex: 1 1 0%;
+            }
+            .datatable td, .datatable th {
+                padding: 12px 0;
+                min-width: 0;
+                -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+                position: relative;
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1>Reservation Management<small>Package management</small></h1>
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                    <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                    <el-breadcrumb-item>Reservation Management</el-breadcrumb-item>
+                    <el-breadcrumb-item>Package management</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="app-container">
+                <div class="box">
+                    <!-- search bar -->
+                    <div class="filter-container">
+                        <el-input placeholder="Code/Name/HelpCode" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"></el-input>
+                        <el-button @click="searchPage()" class="dalfBut">Search</el-button>
+                        <el-button type="primary" class="butT" @click="handleCreate()">Create</el-button>
+                    </div>
+                    <!-- content table -->
+                    <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="#"></el-table-column>
+                        <el-table-column prop="code" label="Code" align="center"></el-table-column>
+                        <el-table-column prop="name" label="Name" align="center"></el-table-column>
+                        <el-table-column label="Sex" align="center">
+                            <template slot-scope="scope">
+                                <span>{{ scope.row.sex == '0' ? 'M/F' : scope.row.sex == '1' ? 'M' : 'F'}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="age" label="Age Range" align="center"></el-table-column>
+                        <el-table-column prop="helpCode" label="HelpCode" align="center"></el-table-column>
+                        <el-table-column prop="remark" label="Remark" align="center"></el-table-column>
+                        <el-table-column label="Action" align="center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Edit</el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">Delete</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="pagination-container">
+                        <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+                    <div class="add-form">
+                        <el-dialog title="Package Info" :visible.sync="dialogFormVisible" v-if="dialogFormVisible">
+                            <template>
+                                <el-tabs v-model="activeName" type="card" >
+                                    <el-tab-pane label="Basic Info" name="first">
+                                        <el-form label-position="right" label-width="100px">
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Code">
+                                                        <el-input v-model="formData.code"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Name">
+                                                        <el-input v-model="formData.name"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Sex">
+                                                        <el-select v-model="formData.sex">
+                                                            <el-option label="M/F" value="0"></el-option>
+                                                            <el-option label="M" value="1"></el-option>
+                                                            <el-option label="F" value="2"></el-option>
+                                                        </el-select>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="HelpCode">
+                                                        <el-input v-model="formData.helpCode"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Price">
+                                                        <el-input v-model="formData.price"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Age Range">
+                                                        <el-input v-model="formData.age"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Upolad Image">
+                                                        <el-upload
+                                                                class="avatar-uploader"
+                                                                action="../setmeal/upload.do"
+                                                                :auto-upload="autoUpload"
+                                                                name="imgFile"
+                                                                :show-file-list="false"
+                                                                :on-success="handleAvatarSuccess"
+                                                                :before-upload="beforeAvatarUpload">
+                                                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                                        </el-upload>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Remark">
+                                                        <el-input v-model="formData.remark" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Attention">
+                                                        <el-input v-model="formData.attention" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                        </el-form>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="Check Group Info" name="second">
+										<div class="checkScrol">
+											<table class="datatable">
+												<thead>
+												<tr>
+													<th>#</th>
+													<th>Code</th>
+													<th>Name</th>
+													<th>Remark</th>
+												</tr>
+												</thead>
+												<tbody>
+												<tr v-for="c in tableData">
+													<td>
+														<input :id="c.id" v-model="checkgroupIds" type="checkbox" :value="c.id">
+													</td>
+													<td><label :for="c.id">{{c.code}}</label></td>
+													<td><label :for="c.id">{{c.name}}</label></td>
+													<td><label :for="c.id">{{c.remark}}</label></td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </template>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="handleAdd()">Submit</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script src="../js/axios-0.18.0.js"></script>
+        <script src="../plugins/elementui/en.js"></script>
+        <script>
+            ELEMENT.locale(ELEMENT.lang.en)
+        </script>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data:{
+                    autoUpload:true,// automatically upload , prop of ElementUI file upload controls
+                    imagePrefix:'http://qiniu.xingxingli.org/',
+                    imageUrl:null, // image url after uploaded image , filled by <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    activeName:'first',// TAB name of dialog
+                    pagination: {
+                        currentPage: 1,
+                        pageSize:10,
+                        total:100,
+                        queryString:null
+                    },
+                    dataList: [],// rows data
+                    formData: {},// form data
+                    tableData:[],// check group form data
+                    checkgroupIds:[],// check group id
+                    dialogFormVisible: false,// if display the dialog
+                    loading : null
+                },
+                created() {
+                    this.findPage();
+                },
+                watch : {
+                    dialogFormVisible(newValue , oldValue) {
+                        if(!newValue) {
+                            this.resetForm();
+                        }
+                    }
+                },
+                methods: {
+                    getCompleteImgUrl(filename) {
+                        // return this.imagePrefix + filename + "?v=" + new Date().getTime();
+                        return this.imagePrefix + filename;
+                    },
+                    // hook function of EL upload file control
+                    handleAvatarSuccess(response, file) {
+                        if(this.loading != null) this.loading.close();
+                        if(response.status && response.status == 403) {
+                            this.$message.error(response.message);
+                            return false;
+                        }
+                        this.imageUrl = this.getCompleteImgUrl(response.data)
+                        if(response.flag) {
+                            this.$message.success(response.message);
+                        } else {
+                            this.$message.error(response.message);
+                        }
+                        this.formData.img = response.data;
+                    },
+                    beforeAvatarUpload(file) {
+                        const isJPG = file.type === 'image/jpeg';
+                        const isLt2M = file.size / 1024 / 1024 < 2;
+                        if (!isJPG) {
+                            this.$message.error('Image format can only be JPG!');
+                        }
+                        if (!isLt2M) {
+                            this.$message.error('Image size can not be greater than 2 MB!');
+                        }
+                        if(isJPG && isLt2M) {
+                            this.loading = this.$loading({
+                                lock: true,
+                                text: 'Loading',
+                                spinner: 'el-icon-loading',
+                                background: 'rgba(0, 0, 0, 0.7)'
+                            });
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    handleAdd () {
+                        var param = {};
+                        param.formData = this.formData;
+                        param.checkgroupIds = this.checkgroupIds;
+                        var promise = null;
+                        if( param.formData.id === undefined || param.formData.id === null) {
+                            promise = axios.post("../setmeal/add.do", param);
+                        } else {
+                            promise = axios.put("../setmeal/update.do", param);
+                        }
+                        if(promise != null) {
+                            promise.then((res)=>{
+                                if(this.ifAccessDenied(res)) {
+                                    return false;
+                                }
+                                if(res.data.flag) {
+                                    this.$message.success(res.data.message);
+                                    this.dialogFormVisible =false;
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            }).finally((res)=>{
+                                this.findPage();
+                            });
+                        }
+                    },
+                    handleUpdate(row){
+                        this.dialogFormVisible = true;
+                        axios.get("../setmeal/findById.do?id=" + row.id).then((res)=>{
+                            if(res.data.flag) {
+                                this.formData = res.data.data;
+                                this.imageUrl = this.getCompleteImgUrl(this.formData.img);
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                        var findCheckgroupIdsBySetmealId = new Promise((resolve , rej) => {
+                            axios.get("../setmeal/findCheckgroupIdsBySetmealId.do?id=" + row.id).then((res) => {
+                                resolve(res);
+                            });
+                        });
+                        axios.get("../checkgroup/findAll.do").then((res)=>{
+                            if(res.data.flag) {
+                                this.tableData = res.data.data;
+                                return findCheckgroupIdsBySetmealId;
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        }).then((res) => {
+                            if(res.data.flag) {
+                                this.checkgroupIds = res.data.data;
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    },
+                    handleDelete(row) {
+                        this.$confirm("Are you sure you want to delete '" + row.name + "'?"  , "Warning",{
+                            confirmButtonText : "Yes",
+                            cancelButtonText : "No",
+                            type : "warning"
+                        }).then((res) => {
+                            axios.delete("../setmeal/delete.do?id=" + row.id).then((res)=>{
+                                if(this.ifAccessDenied(res)) {
+                                    return false;
+                                }
+                                if(res.data.flag) {
+                                    this.$message.success(res.data.message);
+                                    this.findPage();
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                        });
+                    },
+                    searchPage(){
+                        this.pagination.currentPage = 1;
+                        this.findPage();
+                    },
+                    findPage() {
+                        var param = JSON.parse(JSON.stringify(this.pagination));
+                        axios.post("../setmeal/findPage.do", param).then((res) => {
+                            this.dataList = res.data.rows;
+                            this.pagination.total = res.data.total;
+                        });
+                    },
+                    resetForm() {
+                        this.formData = {};
+                        this.activeName = 'first';
+                        this.checkgroupIds = [];
+                        this.imageUrl = null;
+                    },
+                    handleCreate() {
+                        this.dialogFormVisible = true;
+                        // get all the check groups and display
+                        axios.get("../checkgroup/findAll.do").then((res)=>{
+                            if(res.data.flag) {
+                                this.tableData = res.data.data;
+                                this.$message.success(res.data.message);
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    },
+                    handleCurrentChange(currentPage) {
+                        this.pagination.currentPage = currentPage;
+                        this.findPage();
+                    },
+                    ifAccessDenied(response){
+                        // this.$alert(response);
+                        if( response.data.status && response.data.status == 403) {
+                            this.$message.error(response.data.message);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+
+            })
+        </script>
+    </body>
+</html>

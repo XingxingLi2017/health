@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../img/asset-favico.ico">
+        <title>Reservation Notice</title>
+        <link rel="stylesheet" href="../css/page-health-orderNotice.css" />
+        <script src="../plugins/jquery/dist/jquery.min.js"></script>
+        <script src="../plugins/healthmobile.js"></script>
+        <script src="../plugins/vue/vue.js"></script>
+        <script src="../plugins/vue/axios-0.18.0.js"></script>
+        <script>
+            var id = getUrlParam("orderId");
+        </script>
+    </head>
+    <body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+        <div id="app" class="app">
+            <div class="top-header">
+                <span class="f-left"><i class="icon-back" onclick="history.go(-1)"></i></span>
+                <span class="center">XingHealth</span>
+                <span class="f-right"><i class="icon-more"></i></span>
+            </div>
+            <div class="contentBox">
+                <div class="notice-article">
+                    <div class="info-title">
+                        <span class="name">Reserve Successfully</span>
+                    </div>
+                    <div class="notice-item">
+                        <div class="item-title">Reservation Info</div>
+                        <div class="item-content">
+                            <p>Name: {{orderInfo.member}}</p>
+                            <p>Package Name: {{orderInfo.setmeal}}</p>
+                            <p>Date: {{orderInfo.orderDate}}</p>
+                            <p>Reservation Type: {{orderInfo.orderType}}</p>
+                        </div>
+                    </div>
+                    <div class="notice-item">
+                        <div class="item-title">Notice</div>
+                        <div class="item-content">
+                            <p>
+                                1. There should not be too much changes in the diet three days before the physical examination. Try to ensure a light diet, avoid greasy, sweet, and salty foods, and avoid overeating with uneven diet, so as not to affect the examination results.
+                            </p>
+                            <p>
+                                2. Before the physical examination, you should take a good rest, try not to do strenuous exercise and not be emotionally agitated, ensure enough sleep time, and adjust your physical state.
+                            </p>
+                            <p>
+                                3. Do not drink alcohol before the physical examination. Alcohol will affect the accuracy of the examination, such as causing abnormal triglyceride, transaminase and other examination results, which interferes with many examination items.
+                            </p>
+                            <p>
+                                4. On the day of the physical examination, you should make sure to wear light and simple. In addition, ladies should be careful not to wear dresses, pantyhose, and accessories, which may affect the examination.
+                            </p>
+                            <p>
+                                5. Ladies should avoid the menstrual period to prevent the menstrual period from affecting related examination results.
+                            </p>
+                            <p>
+                                6. If you have a prostate or gynecological B-ultrasound examination, we need to collect your urine. You can drink water before the examination to ensure that the bladder is full before the examination.
+                            </p>
+                            <p>
+                                7. If there is a gynecological examination, it is necessary to pay attention to avoiding sex before the examination. Sex will affect the vagina examination and interfere with the result of the examination.
+                            </p>
+                            <p>
+                                8. It is not advisable to over-clean before the gynecological examination or use medicine to vagina, because excessive cleaning and medicine may affect the results of the examination.
+                            </p>
+                            <p>
+                                9. Actively cooperate with the doctor's examination, maintain a good state, tell the doctor your real situation, which can help the doctor make correct decision about your health.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var vue = new Vue({
+            el:'#app',
+            data:{
+                orderInfo:{}
+            },
+            mounted(){
+                axios.get("../order/findById.do?id=" + id).then((response) => {
+                    this.orderInfo = response.data.data;
+                });
+            }
+        });
+    </script>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0,user-scalable=no,minimal-ui">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../img/asset-favico.ico">
+        <title>Login</title>
+        <link rel="stylesheet" href="../css/page-health-login.css" />
+        <link rel="stylesheet" href="../plugins/elementui/index.css" />
+        <script src="../plugins/jquery/dist/jquery.min.js"></script>
+        <script src="../plugins/healthmobile.js"></script>
+        <script src="../plugins/vue/vue.js"></script>
+        <script src="../plugins/vue/axios-0.18.0.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script src="../plugins/elementui/en.js"></script>
+        <script>
+            ELEMENT.locale(ELEMENT.lang.en)
+        </script>
+    </head>
+    <body data-spy="scroll" data-target="#myNavbar" data-offset="150">
+    <div class="app" id="app">
+        <div class="top-header">
+            <span class="f-left"><i class="icon-back"></i></span>
+            <span class="center">XingHealth</span>
+            <span class="f-right"><i class="icon-more"></i></span>
+        </div>
+        <div style="margin-left: 20px">Login By Verification Code</div>
+        <div class="contentBox">
+            <div class="login">
+                <form id='login-form'>
+                    <div class="input-row">
+                        <label>Email</label>
+                        <div class="loginInput">
+                            <input v-model="loginInfo.email" id='account' type="text" placeholder="Please input your registered email">
+                            <input id="validateCodeButton" @click="sendValidateCode()" type="button" style="font-size: 12px" value="Get Verification Code">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <label>Verification Code</label>
+                        <div class="loginInput">
+                            <input v-model="loginInfo.validateCode" style="width:80%" id='password' type="password" placeholder="Please input verification code.">
+                        </div>
+                    </div>
+                    <div class="input-row" style="font-size: 12px">
+                        <input type="checkbox" checked>
+                        Read and agree <a href="javascript:void(0)">XingHealth User Agreement</a> and <a href="javascript:void(0)">XingHealth Privacy Policy</a>
+                    </div>
+                    <div class="btn yes-btn"><a @click="login()" href="#">Login</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </body>
+    <script>
+        var vue = new Vue({
+            el:'#app',
+            data:{
+                loginInfo:{}
+            },
+            methods:{
+                sendValidateCode(){
+                    var email = this.loginInfo.email;
+                    if (!checkEmail(email)) {
+                        this.$message.error('Email format is invalid');
+                        return false;
+                    }
+                    validateCodeButton = $("#validateCodeButton")[0];
+                    clock = window.setInterval(doLoop, 1000);
+                    axios.get("../validateCode/send4Login.do?email=" + email).then((response) => {
+                        if(!response.data.flag){
+                            this.$message.error("Fail to send verification code");
+                        } else {
+                            this.$message.success("Send verification code successfully");
+                        }
+                    });
+                },
+                login(){
+                    var email = this.loginInfo.email;
+                    if (!checkEmail(email)) {
+                        this.$message.error('Email format is invalid');
+                        return false;
+                    }
+                    axios.post("../member/login.do",this.loginInfo).then((response) => {
+                        if(response.data.flag){
+                            window.location.href="member.html";
+                        }else{
+                            this.$message.error(response.data.message);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</html>

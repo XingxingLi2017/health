@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xing.dao.OrderSettingDao">
+    <insert id="add" parameterType="com.xing.pojo.OrderSetting">
+        insert into t_ordersetting
+        (orderDate , number , reservations)
+        values
+        (#{orderDate} , #{number}, #{reservations})
+    </insert>
+    <select id="findCountByOrderDate" parameterType="date" resultType="long">
+        select COUNT(id)
+        from t_ordersetting
+        where orderDate = #{orderDate}
+    </select>
+    <update id="editNumberByOrderDate" parameterType="com.xing.pojo.OrderSetting">
+        update t_ordersetting
+        set number = #{number}
+        where orderDate = #{orderDate}
+    </update>
+
+    <select id="getOrderSettingByMonth" resultType="com.xing.pojo.OrderSetting" parameterType="map">
+        select *
+        from t_ordersetting
+        where orderDate between #{startDate} and #{endDate}
+    </select>
+
+    <select id="findByOrderDate" resultType="com.xing.pojo.OrderSetting" parameterType="date">
+        select *
+        from t_ordersetting
+        where orderDate = #{date}
+    </select>
+    <update id="editReservationsByOrderDate" parameterType="com.xing.pojo.OrderSetting">
+        update t_ordersetting
+        set reservations = #{reservations}
+        where orderDate = #{orderDate}
+    </update>
+</mapper>

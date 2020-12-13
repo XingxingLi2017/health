@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://code.alibabatech.com/schema/dubbo
+						http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config />
+    <!-- clear img job -->
+    <bean id="clearImgJob" class="com.xing.jobs.ClearImgJob" />
+    <bean id="clearStaticHtmlJob" class="com.xing.jobs.ClearStaticHtmlJob"/>
+
+    <!-- get job detail bean -->
+    <bean id="clearImgJD" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="clearImgJob"/>
+        <property name="targetMethod" value="clearImg" />
+    </bean>
+    <bean id="clearRedisCacheJD" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="clearImgJob"/>
+        <property name="targetMethod" value="clearRedisCache" />
+    </bean>
+    <bean id="clearQiniuImageServerJD" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="clearImgJob"/>
+        <property name="targetMethod" value="clearQiniuImageServer" />
+    </bean>
+    <bean id="clearStaticHtmlJD" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="clearStaticHtmlJob"/>
+        <property name="targetMethod" value="clearMobileSetmealHtml"/>
+    </bean>
+
+    <!-- get trigger -->
+    <bean id="clearImgTR" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="clearImgJD"/>
+        <property name="cronExpression" value="0 0 2/5 * * ?"/>
+        <!--<property name="cronExpression" value="0 0/3 * * * ?"/>-->
+    </bean>
+    <bean id="clearRedisCacheTR" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="clearRedisCacheJD"/>
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+        <!--<property name="cronExpression" value="0 0/5 * * * ?"/>-->
+    </bean>
+    <bean id="clearQiniuImageServerTR" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="clearQiniuImageServerJD"/>
+        <!--<property name="cronExpression" value="0 30 2 * * ?"/>-->
+        <property name="cronExpression" value="0 0/5 * * * ?"/>
+    </bean>
+    <bean id="clearStaticHtmlTR" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="clearStaticHtmlJD"/>
+        <property name="cronExpression" value="0 0/3 * * * ?"/>
+    </bean>
+
+    <!-- get scheduler -->
+    <bean id="schedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <!--<ref bean="clearImgTR" />-->
+                <!--<ref bean="clearRedisCacheTR"/>-->
+                <ref bean="clearStaticHtmlTR"/>
+                <ref bean="clearQiniuImageServerTR"/>
+            </list>
+        </property>
+    </bean>
+
+    <context:property-placeholder location="classpath:freemarker.properties"/>
+</beans>

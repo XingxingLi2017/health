@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_template" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b09a5dcd-d8d7-455e-8bac-6da5faf93884">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="todayNewMember" class="java.lang.Integer"/>
+	<parameter name="totalMember" class="java.lang.Integer"/>
+	<parameter name="thisWeekNewMember" class="java.lang.Integer"/>
+	<parameter name="thisMonthNewMember" class="java.lang.Integer"/>
+	<parameter name="todayOrderNumber" class="java.lang.Integer"/>
+	<parameter name="todayVisitsNumber" class="java.lang.Integer"/>
+	<parameter name="thisWeekOrderNumber" class="java.lang.Integer"/>
+	<parameter name="thisWeekVisitsNumber" class="java.lang.Integer"/>
+	<parameter name="thisMonthOrderNumber" class="java.lang.Integer"/>
+	<parameter name="thisMonthVisitsNumber" class="java.lang.Integer"/>
+	<parameter name="reportDate" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="setmeal_count" class="java.lang.Long"/>
+	<field name="proportion" class="java.math.BigDecimal"/>
+	<field name="remark" class="java.lang.String"/>
+	<background>
+		<band height="198" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="78" y="-10" width="398" height="30" uuid="a9329726-642b-4245-8142-bce7142c61cc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Lucida Sans" size="18"/>
+				</textElement>
+				<text><![CDATA[XingHealth Business Statistics]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="476" y="-10" width="100" height="30" uuid="c8eb2d03-74b5-4de0-af96-d2cfc3b89df9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="289">
+			<staticText>
+				<reportElement x="80" y="30" width="100" height="30" uuid="ffc061a0-5491-48ae-927d-ac3835ee8edc"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[New Members:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="30" width="100" height="30" uuid="153329cd-48d1-41a6-a862-d79e0da3f1e7"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Total Members:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="60" width="100" height="30" uuid="e1e89452-76c1-4d78-9705-0897ae80ef63"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[New Members In The Week:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="60" width="100" height="30" uuid="adc2338b-3dd5-4408-ba1c-d8308ae05057"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[New Members In The Month:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="30" width="100" height="30" uuid="f3fcfc5d-f891-4ef7-bcce-192e3a6b20fc"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{todayNewMember}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="30" width="100" height="30" uuid="54608662-0c94-4a89-ae22-2929ff613200">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalMember}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="60" width="100" height="30" uuid="bdbd3816-5f58-4e78-8b0b-535efbf4ca74"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisWeekNewMember}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="60" width="100" height="30" uuid="60961792-021d-4022-b288-79d166f53a25"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisMonthNewMember}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="140" y="100" width="274" height="20" uuid="aba56171-fab6-4b08-bb8b-29271dcb8acd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="16"/>
+				</textElement>
+				<text><![CDATA[Patient Attendance Statistics]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="130" width="100" height="30" uuid="7694245e-bdfc-406f-8714-6c54cbe00ca5"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Reservations Today:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="130" width="100" height="30" uuid="46ab61a3-76bf-4584-bff2-eba45bd334d6"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Attended Patients Today:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="130" width="100" height="30" uuid="8556007a-e335-47e5-8bb5-2c620d458ade"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{todayOrderNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="160" width="100" height="30" uuid="99ff4ab7-c4e3-40ab-96c7-d1e525416601"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Reservations In The Week:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="160" width="100" height="30" uuid="6769dbe0-d85f-4902-9f94-30a8e3765e0e"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Attended Patients In The Week:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="190" width="100" height="30" uuid="f8439e5d-74fc-4132-bb78-45f9e701e66d"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Reservations In The Month:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="190" width="100" height="30" uuid="bec3e0b4-d7ea-4792-b0b0-203b861c3867"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Attended Patients In The Month:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="160" width="100" height="30" uuid="cfe0af06-381e-44bc-9450-91f12b8441dd"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisWeekOrderNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="190" width="100" height="30" uuid="10bd2555-3cd5-4ec7-9f91-73100e015103"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisMonthOrderNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="130" width="100" height="30" uuid="05fc8677-58ff-4156-aa4b-31fea703b991"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{todayVisitsNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="160" width="100" height="30" uuid="1589f6a3-84ed-4bd6-b3b7-20b53b14aed7"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisWeekVisitsNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="190" width="100" height="30" uuid="a5cd01f0-dfa3-4f54-a13f-81781898c425"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{thisMonthVisitsNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="140" y="230" width="274" height="20" uuid="d0e3d9ff-4331-49bc-878a-8185b654ea67"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="16"/>
+				</textElement>
+				<text><![CDATA[Hot Checkup Package]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="194" y="0" width="166" height="30" uuid="f18374ba-6f15-478f-8b99-4054011b1209"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="16"/>
+				</textElement>
+				<text><![CDATA[Member Statistics]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="259" width="100" height="30" uuid="a3e0daf7-9a80-4a29-abfa-7d1f3c22a8ba">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1937dc1c-d1bb-4361-af80-98447dfc472c"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="259" width="100" height="30" uuid="58d088f2-400a-46df-b476-860820a523c4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee6f302b-adc1-4633-b10c-afdeec96fb1e"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Reservations]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="259" width="100" height="30" uuid="1da68022-885d-42bb-af9b-e58fa903b57d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77879d56-3b0d-4ed4-a379-cbee8a199cd6"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Proportion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="259" width="100" height="30" uuid="612ed1de-429d-4e2b-93cb-50986e62d533">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a79d0f4a-2c97-4dad-a0a9-26db0a93400d"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Remark]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="80" y="0" width="100" height="30" uuid="4f76c3f3-2013-4d63-915c-3e3e8267e66a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1937dc1c-d1bb-4361-af80-98447dfc472c"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="100" height="30" uuid="a522fa96-4921-47de-984c-2644a346d6ed">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee6f302b-adc1-4633-b10c-afdeec96fb1e"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{setmeal_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="100" height="30" uuid="7cfb5d89-0fa5-4e55-a526-3377a0a2e395">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77879d56-3b0d-4ed4-a379-cbee8a199cd6"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{proportion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="100" height="30" uuid="03d193d9-9519-41e0-9bf3-1154068ac360">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a79d0f4a-2c97-4dad-a0a9-26db0a93400d"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

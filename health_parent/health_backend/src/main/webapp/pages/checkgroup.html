@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <style>
+            .datatable {
+                position: relative;
+                box-sizing: border-box;
+                -webkit-box-flex: 1;
+                width: 100%;
+                max-width: 100%;
+                font-size: 14px;
+                color: rgb(96, 98, 102);
+                overflow: hidden;
+                flex: 1 1 0%;
+            }
+            .datatable td, .datatable th {
+                padding: 12px 0;
+                min-width: 0;
+                -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+                position: relative;
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1>Reservation Management<small>Check group management</small></h1>
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                    <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                    <el-breadcrumb-item>Reservation Management</el-breadcrumb-item>
+                    <el-breadcrumb-item>Check group management</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="app-container">
+                <div class="box">
+                    <div class="filter-container">
+                        <el-input placeholder="Code/Name/HelpCode" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"></el-input>
+                        <el-button @click="searchPage()" class="dalfBut">Search</el-button>
+                        <el-button type="primary" class="butT" @click="handleCreate()">Create</el-button>
+                    </div>
+
+                    <!-- Table showing the records -->
+                    <el-table size="medium" current-row-key="id" :data="dataList" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="#"></el-table-column>
+                        <el-table-column prop="code" label="Code" align="center"></el-table-column>
+                        <el-table-column prop="name" label="Name" align="center"></el-table-column>
+                        <el-table-column label="Sex" align="center">
+                            <template slot-scope="scope">
+                                <span>{{ scope.row.sex == '0' ? 'M/F' : scope.row.sex == '1' ? 'M' : 'F'}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="helpCode" label="HelpCode" align="center"></el-table-column>
+                        <el-table-column prop="remark" label="Remark" align="center"></el-table-column>
+                        <el-table-column label="Action" align="center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Edit</el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">Delete</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="pagination-container">
+                        <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+
+                    <!-- Add New Group -->
+                    <div class="add-form">
+                        <el-dialog title="Add Check Group" :visible.sync="dialogFormVisible" v-if="dialogFormVisible">
+                            <template>
+                                <el-tabs v-model="activeName" type="card">
+                                    <el-tab-pane label="Basic Info" name="first">
+                                        <el-form label-position="right" label-width="100px">
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Code">
+                                                        <el-input v-model="formData.code"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Name">
+                                                        <el-input v-model="formData.name"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Sex">
+                                                        <el-select v-model="formData.sex">
+                                                            <el-option label="M/F" value="0"></el-option>
+                                                            <el-option label="M" value="1"></el-option>
+                                                            <el-option label="F" value="2"></el-option>
+                                                        </el-select>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="HelpCode">
+                                                        <el-input v-model="formData.helpCode"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Remark">
+                                                        <el-input v-model="formData.remark" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Attention">
+                                                        <el-input v-model="formData.attention" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                        </el-form>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="Check Item Info" name="second">
+									<div class="checkScrol">
+                                        <table class="datatable">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Item Code</th>
+                                                <th>Item Name</th>
+                                                <th>Item Remark</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="c in tableData">
+                                                <td>
+                                                    <input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+                                                </td>
+                                                <td><label :for="c.id">{{c.code}}</label></td>
+                                                <td><label :for="c.id">{{c.name}}</label></td>
+                                                <td><label :for="c.id">{{c.remark}}</label></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+									</div>
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </template>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="handleAdd()">Submit</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+                    <!-- Edit Check Group Dialog -->
+                    <div class="add-form">
+                        <el-dialog title="Edit Check Group" :visible.sync="dialogFormVisible4Edit" v-if="dialogFormVisible4Edit">
+                            <template>
+                                <el-tabs v-model="activeName" type="card">
+                                    <el-tab-pane label="Basic Info" name="first">
+                                        <el-form label-position="right" label-width="100px">
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Code">
+                                                        <el-input v-model="formData.code"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Name">
+                                                        <el-input v-model="formData.name"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="Sex">
+                                                        <el-select v-model="formData.sex">
+                                                            <el-option label="M/F" value="0"></el-option>
+                                                            <el-option label="M" value="1"></el-option>
+                                                            <el-option label="F" value="2"></el-option>
+                                                        </el-select>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="HelpCode">
+                                                        <el-input v-model="formData.helpCode"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Remark">
+                                                        <el-input v-model="formData.remark" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="Attention">
+                                                        <el-input v-model="formData.attention" type="textarea"></el-input>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                        </el-form>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="Check Item Info" name="second">
+										<div class="checkScrol">
+											<table class="datatable">
+												<thead>
+													<tr>
+                                                        <th>#</th>
+                                                        <th>Item Code</th>
+                                                        <th>Item Name</th>
+                                                        <th>Item Remark</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr v-for="c in tableData">
+														<td>
+															<input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+														</td>
+														<td><label :for="c.id">{{c.code}}</label></td>
+														<td><label :for="c.id">{{c.name}}</label></td>
+														<td><label :for="c.id">{{c.remark}}</label></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </template>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible4Edit = false">Cancel</el-button>
+                                <el-button type="primary" @click="handleEdit()">Submit</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script src="../js/axios-0.18.0.js"></script>
+        <script src="../plugins/elementui/en.js"></script>
+        <script>
+            ELEMENT.locale(ELEMENT.lang.en)
+        </script>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data:{
+                    activeName:'first',// ADD/EDIT window tab name
+                    pagination: {// props for pagination
+                        currentPage: 1,
+                        pageSize:10,
+                        total:100,
+                        queryString:null,
+                    },
+                    dataList: [],// data of table rows
+                    formData: {},// data of add/edit form
+                    tableData:[],// check item info in add/edit form
+                    checkitemIds:[],// checkboxs' ids in add/edit form when select check items
+                    dialogFormVisible: false,// show/hide add check group window
+                    dialogFormVisible4Edit:false// show/hid edit check group window
+                },
+                created() {
+                    this.findPage();
+                },
+                methods: {
+                    handleEdit() {
+                        var params = {};
+                        params.formData = this.formData;
+                        params.checkitemIds = this.checkitemIds;
+                        axios.put("../checkgroup/edit.do", params)
+                            .then((res)=>{
+                                if(this.ifAccessDenied(res)) return false;
+                                if(res.data.flag) {
+                                    this.dialogFormVisible4Edit = false;
+                                    this.$message.success(res.data.message);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            })
+                            .finally(()=>{
+                                this.findPage();
+                            });
+                    },
+                    handleAdd () {
+                        var params = Object.assign({}, this.formData);
+                        params.checkitemIds = this.checkitemIds;
+                        axios.post("../checkgroup/add.do",params)
+                            .then((res)=>{
+                                if(this.ifAccessDenied(res)) return false;
+                                if(res.data.flag){
+                                    this.dialogFormVisible = false;
+                                    this.$message.success(res.data.message);
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            })
+                            .finally(()=>{
+                                this.findPage();
+                            });
+                    },
+                    searchPage(){
+                        this.pagination.currentPage = 1;
+                        this.findPage();
+                    },
+                    findPage() {
+                        var param = Object.assign({} , this.pagination);
+                        axios.post("../checkgroup/findPage.do", param)
+                            .then((res)=>{
+                                this.dataList = res.data.rows;
+                                this.pagination.total = res.data.total;
+                            });
+                    },
+                    resetForm() {
+                        this.formData = {};
+                        // this.tableData=[];
+                        this.checkitemIds = [];
+                        activeName = 'first';
+                    },
+                    handleCreate() {
+                        // handle create btn click event
+                        this.dialogFormVisible = true;
+                        this.resetForm();
+                        axios.get("../checkitem/findAll.do")
+                            .then((res)=>{
+                                if(res.data.flag) {
+                                    this.tableData = res.data.data;
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                    },
+                    handleUpdate(row) {
+                        this.resetForm();
+                        this.dialogFormVisible4Edit = true;
+                        axios.get("../checkgroup/findById.do?id=" + row.id)
+                            .then((res)=>{
+                                if(res.data.flag) {
+                                    this.formData = res.data.data;
+                                    return new Promise((reslove, reject) => {
+                                        axios.get("../checkitem/findAll.do").then((res)=>{
+                                            reslove(res);
+                                        });
+                                    });
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            })
+                            .then((res)=>{
+                                if(res.data.flag) {
+                                    this.tableData = res.data.data;
+                                    this.checkitemIds = [];
+                                    for(var checkItem of this.formData.checkItems) {
+                                        this.checkitemIds.push(checkItem.id);
+                                    }
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                    },
+                    handleCurrentChange(currentPage) {
+                        this.pagination.currentPage = currentPage;
+                        this.findPage();
+                    },
+                    handleDelete(row) {
+                        this.$confirm("Are you sure you want to delete '" + row.name + "'?" , "warning" , {
+                            confirmButtonText : "Yes",
+                            cancelButtonText : "No",
+                            type : "warning"
+                        }).then((res)=>{
+                            axios.delete("../checkgroup/delete.do?id=" + row.id).then((res)=>{
+                                if(this.ifAccessDenied(res)) return false;
+                                if(res.data.flag) {
+                                    this.$message.success(res.data.message);
+                                    this.findPage();
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            });
+                        }).catch((res)=>{
+
+                        });
+                    },
+                    ifAccessDenied(response){
+                        // this.$alert(response);
+                        if( response.data.status && response.data.status == 403) {
+                            this.$message.error(response.data.message);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                }
+            })
+        </script>
+    </body>
+</html>

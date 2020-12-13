@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>XingHealth</title>
+        <meta name="description" content="XingHealth">
+        <meta name="keywords" content="XingHealth">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <style>
+            .grid-content {
+                border-radius: 4px;
+                min-height: 40px;
+            }
+        </style>
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1>Statistics Analysis<small>Business Statistics</small></h1>
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                    <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+                    <el-breadcrumb-item>Statistics Analysis</el-breadcrumb-item>
+                    <el-breadcrumb-item>Business Statistics</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="app-container">
+                <div class="box" style="height: 900px">
+                    <div class="excelTitle" >
+                        <el-button @click="exportExcel">Export Excel</el-button>
+                        <el-button @click="exportPdf">Export PDF</el-button>
+                        <label>Business Statistics Report</label>
+                    </div>
+                    <div class="excelTime">Date: {{reportData.reportDate}}</div>
+                    <table class="exceTable" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td colspan="4" class="headBody">Member Statistics</td>
+                        </tr>
+                        <tr>
+                            <td width='20%' class="tabletrBg">New Members</td>
+                            <td width='30%'>{{reportData.todayNewMember}}</td>
+                            <td width='20%' class="tabletrBg">Total Members</td>
+                            <td width='30%'>{{reportData.totalMember}}</td>
+                        </tr>
+                        <tr>
+                            <td class="tabletrBg">New Members In The Week</td>
+                            <td>{{reportData.thisWeekNewMember}}</td>
+                            <td class="tabletrBg">New Members In The Month</td>
+                            <td>{{reportData.thisMonthNewMember}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="headBody">Patient Attendance Statistics</td>
+                        </tr>
+                        <tr>
+                            <td class="tabletrBg">Reservations Today
+                            </td>
+                            <td>{{reportData.todayOrderNumber}}</td>
+                            <td class="tabletrBg">Attended Patients Today
+                            </td>
+                            <td>{{reportData.todayVisitsNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td class="tabletrBg">Reservations In The Week</td>
+                            <td>{{reportData.thisWeekOrderNumber}}</td>
+                            <td class="tabletrBg">Attended Patients In The Week
+                            </td>
+                            <td>{{reportData.thisWeekVisitsNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td class="tabletrBg">Reservations In The Month
+                            </td>
+                            <td>{{reportData.thisMonthOrderNumber}}</td>
+                            <td class="tabletrBg">Attended Patients In The Month
+                            </td>
+                            <td>{{reportData.thisMonthVisitsNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="headBody">Hot Checkup Package
+                            </td>
+                        </tr>
+                        <tr class="tabletrBg textCenter">
+                            <td>Package Name</td>
+                            <td>Reservations</td>
+                            <td>Proportion</td>
+                            <td>Remark</td>
+                        </tr>
+                        <tr v-for="s in reportData.hotSetmeal">
+                            <td>{{s.name}}</td>
+                            <td>{{s.setmeal_count}}</td>
+                            <td>{{s.proportion}}</td>
+                            <td>{{s.remark}}</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/vue.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script src="../plugins/elementui/en.js"></script>
+        <script>
+            ELEMENT.locale(ELEMENT.lang.en)
+        </script>
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script src="../js/axios-0.18.0.js"></script>
+        <script>
+            var vue = new Vue({
+                el: '#app',
+                data:{
+                    reportData:{
+                        reportDate:null,
+                        todayNewMember :0,
+                        totalMember :0,
+                        thisWeekNewMember :0,
+                        thisMonthNewMember :0,
+                        todayOrderNumber :0,
+                        todayVisitsNumber :0,
+                        thisWeekOrderNumber :0,
+                        thisWeekVisitsNumber :0,
+                        thisMonthOrderNumber :0,
+                        thisMonthVisitsNumber :0,
+                        hotSetmeal :[
+                            {name:'Test Combination 1',setmeal_count:200,proportion:0.222,remark:""},
+                            {name:'Test Combination 2',setmeal_count:200,proportion:0.222,remark:""}
+                        ]
+                    }
+                },
+                created() {
+                    axios.get("../report/getBusinessReportData.do").then((res)=>{
+                        if(res.data.status && res.data.status == 403) {
+                            this.$message.error(res.data.message);
+                            return false;
+                        }
+                        if(res.data.flag) {
+                            this.reportData = res.data.data;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    });
+                },
+                methods:{
+                    exportExcel(){
+                        window.location.href = '../report/exportBusinessReport.do';
+                    },
+                    exportPdf(){
+                        window.location.href='../report/exportBusinessReport4Pdf.do';
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
