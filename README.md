@@ -1,8 +1,8 @@
-# health
-An information management system for health medical organization.
-Using Microservice Architecuture and privoding 45 features in 6 modules including membership management, appointment scheduling, order placement, physical charts management and etc.
+# Health
+* An information management system for health medical organization.
+* Using SOA architecuture and privoding 45 features in 6 modules including membership management, appointment scheduling, order placement, physical charts management and etc.
 # Demo
-http://www.xingxingli.org/health_mobile
+http://www.xingxingli.org/health_mobile <br/>
 http://www.xingxingli.org/health_backend
 ## Technology Stack:
   ### Frontend
