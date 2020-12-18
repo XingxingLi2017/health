@@ -31,6 +31,7 @@ http://www.xingxingli.org/health_backend
   ### Persistent Layer
     * MyBatis
     * MySQL 5.6
+    * Qiniu cloud file system
   ### Deployment
     * CentOS 7
   ### Package Manager
