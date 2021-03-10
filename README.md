@@ -1,6 +1,6 @@
 # Health
-* An information management system for health medical organization.
-* Using SOA architecuture and privoding 45 features in 6 modules
+* An information management system for health medical organizations.
+* Using SOA architecture and providing 45 features in 6 modules
   * Membership management module
   * Checkup reservation module
   * Checkup items management module
