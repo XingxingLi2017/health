@@ -17,18 +17,18 @@ http://www.xingxingli.org/health_backend
     * Html5
     * ElementUI
     * Bootstrap
-  ### Authority
+  ### Service
     * SpringMVC
     * Spring Security
     * Spring Session
-  ### Distribution Architecture
+  ### Registry And RPC Framework
     * Zookeeper
     * Apache Dubbo
   ### Report Generation 
     * Apache POI
     * Echarts
     * Jasper Reports
-  ### Persistent Layer
+  ### Data Persistence
     * MyBatis
     * MySQL 5.6
     * Qiniu cloud file system
